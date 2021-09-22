@@ -1,28 +1,31 @@
 apply plugin: 'com.android.application'
-
 android {
     compileOptions {
         encoding "UTF-8"
     }
+
     defaultConfig {
+
         manifestPlaceholders << copyAndSetFacebook()
+
+        multiDexEnabled true
+        dexOptions {
+            javaMaxHeapSize "4G"
+            preDexLibraries = true
+        }
+        flavorDimensions "default"
     }
-    multiDexEnabled true
-    dexOptions {
-      javaMaxHeapSize "4G"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildFeatures.dataBinding = true
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    flavorDimensions "default"
-
 }
+
 repositories {
     flatDir {
         dirs 'libs'
