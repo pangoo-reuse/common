@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+    defaultConfig {
+        manifestPlaceholders << copyAndSetFacebook()
+    }
+
+}
+
+private Object copyAndSetFacebook() {
+    String google = "google-services.json"
+    String config = "sdkGlobalConfig.json"
+
+    String projectPath = project.rootProject.projectDir.absolutePath
+    String appPath = project.projectDir.absolutePath
+    String configFilePath = appPath + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "assets" + File.separatorChar + config;
+
+    fileTree(projectPath) { ConfigurableFileTree tree ->
+        tree.visit { FileVisitDetails fileVisitDetails ->
+            if (!fileVisitDetails.directory && fileVisitDetails.name.endsWith(google)) {
+                fileVisitDetails.copyTo(file(appPath + File.separatorChar + google))
+            }
+            if (!fileVisitDetails.directory && fileVisitDetails.name.endsWith(config)) {
+                fileVisitDetails.copyTo(file(configFilePath))
+            }
+        }
+    }
+    String json = file(configFilePath).text
+    if (json != null) {
+        def jsonConfig = new groovy.json.JsonSlurper().parseText(json)
+        def facebook = jsonConfig.facebook
+        return facebook;
+    }
+
+    return null
+}
