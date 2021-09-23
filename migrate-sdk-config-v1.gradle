@@ -40,20 +40,36 @@ private Object copyAndSetFacebook() {
 
     String projectPath = project.rootProject.projectDir.absolutePath
     String appPath = project.projectDir.absolutePath
-    String configFilePath = appPath + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "assets" + File.separatorChar + config;
+    String assets = appPath + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "assets"
 
-    fileTree(projectPath) { ConfigurableFileTree tree ->
-        tree.visit { FileVisitDetails fileVisitDetails ->
+    if (!new File(assets).exists()) {
+        new File(assets).mkdirs();
+    }
+    String configFilePath = assets + File.separatorChar + config;
+
+    fileTree(projectPath) {
+        it.visit { FileVisitDetails fileVisitDetails ->
             if (!fileVisitDetails.directory && fileVisitDetails.name.endsWith(google)) {
-                fileVisitDetails.copyTo(file(appPath + File.separatorChar + google))
+                String absolutePath = fileVisitDetails.file.absolutePath
+                File file = file(appPath + File.separatorChar + google)
+                if (!absolutePath.equalsIgnoreCase(file.absolutePath)) {
+                    fileVisitDetails.copyTo(file)
+                }
             }
             if (!fileVisitDetails.directory && fileVisitDetails.name.endsWith(config)) {
-                fileVisitDetails.copyTo(file(configFilePath))
+                String absolutePath = fileVisitDetails.file.absolutePath
+                File file = file(configFilePath)
+                if (!absolutePath.equalsIgnoreCase(file.absolutePath)) {
+                    fileVisitDetails.copyTo(file)
+                }
             }
         }
     }
     String json = file(configFilePath).text
     if (json != null) {
+        println("---------------------------------------")
+        println(json)
+        println("---------------------------------------")
         def jsonConfig = new JsonSlurper().parseText(json)
         def facebook = jsonConfig.facebook
         return facebook;
