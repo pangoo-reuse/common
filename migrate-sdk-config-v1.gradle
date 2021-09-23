@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+import groovy.json.JsonSlurper
 android {
     compileOptions {
         encoding "UTF-8"
@@ -52,7 +53,7 @@ private Object copyAndSetFacebook() {
     }
     String json = file(configFilePath).text
     if (json != null) {
-        def jsonConfig = new groovy.json.JsonSlurper().parseText(json)
+        def jsonConfig = new JsonSlurper().parseText(json)
         def facebook = jsonConfig.facebook
         return facebook;
     }
