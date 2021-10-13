@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
 
-        manifestPlaceholders << copyAndSetFacebook()
+        manifestPlaceholders << copyAndSetMainfestPlaceholder()
 
         multiDexEnabled true
         dexOptions {
@@ -34,7 +34,7 @@ repositories {
     }
 }
 
-private Object copyAndSetFacebook() {
+private Object copyAndSetMainfestPlaceholder() {
     String google = "google-services.json"
     String config = "sdkGlobalConfig.json"
 
@@ -72,8 +72,11 @@ private Object copyAndSetFacebook() {
         println("---------------------------------------")
         def jsonConfig = new JsonSlurper().parseText(json)
         def facebook = jsonConfig.facebook
+        def admob_app_id = jsonConfig.google.admob_app_id
+        facebook.put("admob_app_id",admob_app_id)
         return facebook;
     }
 
     return null
 }
+
